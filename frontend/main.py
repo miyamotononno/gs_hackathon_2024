@@ -1,11 +1,12 @@
-import streamlit as st
+# coding: UTF-8
+import settings
 import requests
+import streamlit as st
 
 st.set_page_config(layout="wide")
-URL = 'http://localhost:8000'
 
 def main():
-    response = requests.get(URL)
+    response = requests.get(settings.URL)
     jsondata = response.json()
     msg = jsondata['message']
     st.title(msg)
