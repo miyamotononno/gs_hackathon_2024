@@ -1,0 +1,30 @@
+# building stage
+FROM python:3.12 as builder
+
+WORKDIR /opt
+
+COPY ./pyproject.toml ./poetry.lock* /opt/
+
+RUN pip install poetry && \
+    poetry config virtualenvs.create false && \
+    poetry install --no-dev && \
+    rm -rf ~/.cache
+
+
+# production stage
+FROM python:3.12-slim
+
+COPY --from=builder /usr/local/lib/python3.12/site-packages /usr/local/lib/python3.12/site-packages
+COPY --from=builder /usr/local/bin/streamlit /usr/local/bin/streamlit
+
+COPY ./app /app
+WORKDIR /app
+
+EXPOSE 8080
+
+# Allow statements and log messages to immediately appear in the Knative logs
+ENV PYTHONUNBUFFERED True
+
+CMD streamlit run main.py \
+    --browser.serverAddress="0.0.0.0" \
+    --server.port="8080"

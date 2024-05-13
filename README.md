@@ -7,6 +7,7 @@ pip install -r requirements.txt
 
 ## How to run the server
 ```
+cd ./backend/
 uvicorn main:app --reload
 ```
 Then go to `http://127.0.0.1:8000/`
@@ -19,7 +20,8 @@ Please see [FastAPI doc](https://fastapi.tiangolo.com/ja/).
 **The above server needs to be up on the background.**
 
 ```
-streamlit run ui.py
+cd ./fronend/
+streamlit run main.py
 ```
 Then go to `http://localhost:8501/`
 
