@@ -5,13 +5,15 @@ from requests.auth import HTTPBasicAuth
 import json
 from github import Github
 import settings
+import service
 
 
 app = FastAPI()
 
 @app.get("/")
 def read_root():
-    return {"message": "YOUNG TOKYO"}
+    # return {"message": "YOUNG TOKYO"}
+    return {"message": service.result.content}
 
 
 @app.get("/items/{item_id}")
