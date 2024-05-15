@@ -4,7 +4,8 @@ import requests
 from requests.auth import HTTPBasicAuth
 import json
 from github import Github
-import Constants
+import settings
+
 
 app = FastAPI()
 
@@ -21,9 +22,9 @@ def read_item(item_id: int, q: str = None):
 @app.get("/jira/{issue_key}")
 def get_jira(issue_key: str):
     url = "https://teki0928.atlassian.net/rest/api/2/issue/" + issue_key
-
-    auth = HTTPBasicAuth(Constants.JIRA_USER_NAME, Constants.JIRA_API_KEY)
-
+    # use comment one for local debugging
+    auth = HTTPBasicAuth(settings.JIRA_USER_NAME, settings.JIRA_API_KEY)
+    # auth = HTTPBasicAuth("w2495969292@gmail.com", "jira_api_key")
     headers = {
         "Accept": "application/json"
     }
@@ -45,7 +46,7 @@ def get_jira(issue_key: str):
 
 @app.get("/github/{repo_owner}/{repo_name}/{pr_id}")
 def get_code_changes(repo_owner:str, repo_name:str, pr_id: int):
-    g = Github(Constants.GITHUB_TOKEN)
+    g = Github()
     repo = g.get_repo(f"{repo_owner}/{repo_name}")
     pr = repo.get_pull(pr_id)
     result = {}
