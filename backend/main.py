@@ -1,4 +1,4 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
 import uvicorn
 import requests
 from requests.auth import HTTPBasicAuth
@@ -18,6 +18,17 @@ def read_root():
 def read_item(item_id: int, q: str = None):
 
     return {"item_id": item_id, "q": q}
+
+@app.post("/info/")
+async def create_info(info: Request):
+    jsondata = await info.json()
+    owner = jsondata["owner"]
+    repo = jsondata["repo"]
+    pr_id = int(jsondata["pr"])
+    issue_key = jsondata["jira"]
+
+    return jsondata
+
 
 @app.get("/jira/{issue_key}")
 def get_jira(issue_key: str):
