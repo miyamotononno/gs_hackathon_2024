@@ -33,3 +33,49 @@ Please see [Streamlit doc](https://docs.streamlit.io/).
 ## How to deploy to GCP
 TBD
 useful link to deploy: [here](https://laid-back-scientist.com/cloud-run-python)
+
+# API Docs
+### get Jira ticket by id
+```
+http://localhost:8000/jira/{jira_ticket_id}
+```
+response:
+```
+{
+  "name": "issue title",
+  "description": "This is the great description of issue 0001.",
+  "labels": [
+    "feat"
+  ],
+  "proj_name": "GS_Hackson",
+  "comments": []
+}
+```
+
+### get Github PR info
+```
+http://localhost:8000/github/{repo_owner}/{repo_name}/{pull_request_id}
+
+example:
+http://localhost:8000/github/tensorflow/tensorflow/67560
+```
+response:
+```
+{
+  "title": "PR #12433: [GPU] Make cuDNN fusion test run on H100.",
+  "number": 67560,
+  "changes": [
+    {
+      "file_name": "third_party/xla/xla/service/gpu/fusions/BUILD",
+      "added_line_num": 1,
+      "deleted_line_num": 1,
+      "added_lines": [
+        "       \"requires-gpu-sm90\","
+      ],
+      "deleted_lines": [
+        "       \"requires-gpu-sm80\","
+      ]
+    }
+  ]
+}
+```
