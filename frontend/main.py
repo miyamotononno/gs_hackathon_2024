@@ -32,6 +32,8 @@ def main():
 
             post_response = requests.post(post_url, data=post_data)
 
+            st.write(post_response.json())
+
             
 
 if __name__ == '__main__':
