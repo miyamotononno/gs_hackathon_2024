@@ -26,16 +26,14 @@ async def create_info(info: Request):
     repo = jsondata["repo"]
     pr_id = int(jsondata["pr"])
     issue_key = jsondata["jira"]
+    response = {}
+    response["jira"] = get_jira(issue_key)
+    response["pr"] = get_pr(owner, repo, pr_id)
+    return response
 
-    return jsondata
-
-
-@app.get("/jira/{issue_key}")
 def get_jira(issue_key: str):
     url = "https://teki0928.atlassian.net/rest/api/2/issue/" + issue_key
-    # use comment one for local debugging
     auth = HTTPBasicAuth(settings.JIRA_USER_NAME, settings.JIRA_API_KEY)
-    # auth = HTTPBasicAuth("w2495969292@gmail.com", "jira_api_key")
     headers = {
         "Accept": "application/json"
     }
@@ -55,10 +53,9 @@ def get_jira(issue_key: str):
     result["comments"] = res["fields"]["comment"]["comments"]
     return result
 
-@app.get("/github/{repo_owner}/{repo_name}/{pr_id}")
-def get_code_changes(repo_owner:str, repo_name:str, pr_id: int):
+def get_pr(owner: str, repo: str, pr_id: int):
     g = Github()
-    repo = g.get_repo(f"{repo_owner}/{repo_name}")
+    repo = g.get_repo(f"{owner}/{repo}")
     pr = repo.get_pull(pr_id)
     result = {}
     result["title"] = pr.title
@@ -71,13 +68,14 @@ def get_code_changes(repo_owner:str, repo_name:str, pr_id: int):
         file_attr["file_name"] = file.filename
         patch_content = file.patch
         patch_lines = patch_content.split('\n')
-        added_lines = [line[2:] for line in patch_lines if line.startswith('+ ') and not line.startswith('+++')]
-        deleted_lines = [line[2:] for line in patch_lines if line.startswith('- ')]
+        added_lines = [line[1:].replace('"','').replace("'","").strip() for line in patch_lines if len(line[1:].replace('"','').replace("'","")) > 0 and line.startswith('+') and not line.startswith('+++')]
+        deleted_lines = [line[1:].replace('"','').replace("'","").strip() for line in patch_lines if len(line[1:].replace('"','').replace("'","")) > 0 and line.startswith('-')]
         file_attr["added_line_num"] = len(added_lines)
         file_attr["deleted_line_num"] = len(deleted_lines)
         file_attr["added_lines"] = added_lines
         file_attr["deleted_lines"] = deleted_lines
         result["changes"].append(file_attr)
     return result
+
 
 
