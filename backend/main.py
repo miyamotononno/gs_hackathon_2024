@@ -12,12 +12,6 @@ app = FastAPI()
 def read_root():
     return {"message": "YOUNG TOKYO"}
 
-
-@app.get("/items/{item_id}")
-def read_item(item_id: int, q: str = None):
-
-    return {"item_id": item_id, "q": q}
-
 @app.post("/info/")
 async def create_info(info: Request):
     jsondata = await info.json()

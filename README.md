@@ -5,13 +5,13 @@
 
 ## How to install libraries
 ```
-pip install -r requirements.txt
+pip install -r backend/requirements.txt
+pip install -r frontend/requirements.txt
 ```
 
-## How to run the server
+## How to run the backend server
 ```
-cd ./backend/
-uvicorn main:app --reload
+uvicorn backend.main:app --reload
 ```
 Then go to `http://127.0.0.1:8000/`
 
@@ -23,16 +23,28 @@ Please see [FastAPI doc](https://fastapi.tiangolo.com/ja/).
 **The above server needs to be up on the background.**
 
 ```
-cd ./fronend/
-streamlit run main.py
+streamlit run fronend/main.py
 ```
 Then go to `http://localhost:8501/`
 
 Please see [Streamlit doc](https://docs.streamlit.io/).
 
-## How to deploy to GCP
-TBD
-useful link to deploy: [here](https://laid-back-scientist.com/cloud-run-python)
+## How to deploy
+
+### Backend
+[Render](https://dashboard.render.com/) detects master branch change and automatically build & run the server.  
+
+backend URL: https://gs-hackathon-2024.onrender.com/
+our page of Render: https://dashboard.render.com/web/srv-cov1gs7sc6pc73atocpg/ (Only one person can access this for free version.)
+
+**[CAUTIOUS]** when you add something to `.env`, we must manually add it to Environment of Render as well. 
+
+### Frontend
+[Streamlit Cloud](https://streamlit.io/cloud) detects master branch change and automatically build & run the server.  
+
+frontend URL: https://mr-autogenerator.streamlit.app/
+
+**[CAUTIOUS]** when you add something to `.env`, we must manually add it to Environment of Streamlit Cloud as well.
 
 # API Docs
 ### get Jira ticket by id
