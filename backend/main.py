@@ -1,10 +1,9 @@
+from . import settings
 from fastapi import FastAPI, Request
-import uvicorn
 import requests
 from requests.auth import HTTPBasicAuth
 import json
 from github import Github
-import settings
 
 
 app = FastAPI()
