@@ -16,7 +16,7 @@ app = FastAPI()
 
 @app.get("/")
 def read_root():
-    return {"message": "YOUNG TOKYO"}
+    return {"message": "# YOUNG TOKYO #"}
 
 @app.post("/info/")
 async def create_info(info: Request):
