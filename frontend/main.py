@@ -34,8 +34,6 @@ def main():
 
             st.write(post_response.json())
 
-            
-
 
 if __name__ == '__main__':
     main()
