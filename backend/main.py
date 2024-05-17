@@ -1,4 +1,4 @@
-import settings
+from .  import settings
 from fastapi import FastAPI, Request
 import requests
 from requests.auth import HTTPBasicAuth
