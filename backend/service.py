@@ -7,16 +7,16 @@ from langchain.prompts.chat import ChatPromptTemplate
 
 JIRA_ticket = {
   "name": "issue title",
-  "description": "This is the great description of issue 0001.",
+  "description": "Terminal: inline chat widget is not consistently hidden",
   "labels": [
     "feat"
   ],
-  "proj_name": "GS_Hackson",
+  "proj_name": "vscode",
   "comments": []
 }
 
-PR = {
-  "title": "PR #12433: [GPU] Make cuDNN fusion test run on H100.",
+PR_ = {
+  "title": "PR #12433: on blur of terminal chat widget, if terminal is not visible, hide it",
   "number": 67560,
   "changes": [
     {
@@ -33,23 +33,23 @@ PR = {
   ]
 }
 
-prompt_template = ChatPromptTemplate.from_messages(
-    [
-        (
-            "system",
-            "You are a software engineer. You are working on a project along with {JIRA_ticket}. "
-            +"You made pull request in project GitHub repository like {PR}",
-        ),
-        ("human", "Please explain what change you made, why and how you did that and testing alongside updates to your code."),
-    ]
-).format_messages(JIRA_ticket=JIRA_ticket,PR=PR)
-# prompt_template.format(JIRA_ticket=JIRA_ticket,PR=PR)
+# prompt_template = ChatPromptTemplate.from_messages(
+#     [
+#         (
+#             "system",
+#             "You are a software engineer. You are working on a project along with {JIRA}. You made pull request in project GitHub repository like {PR}",
+#         ),
+#         ("human", "Please explain what change you made, why and how you did that and testing alongside updates to your code."),
+#     ]
+# ).format_messages(JIRA=str(JIRA_ticket),PR=str(PR_))
 
 llm = ChatGoogleGenerativeAI(model="gemini-pro",
 safety_settings={
         HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT: HarmBlockThreshold.BLOCK_NONE,
     },
+   google_api_key='AIzaSyD_f0uRQtaJGNsXTAQlMPMov3I8yXQ2HE0' 
 )
-result = llm.invoke(prompt_template)
+result = llm.invoke(f"You are a software engineer. You are working on a project along with {JIRA_ticket}. You made pull request in project GitHub repository like {PR_}. Please explain what change you made, why and how you did that and testing alongside updates to your code.")
+print(result)
 
 
