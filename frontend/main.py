@@ -7,10 +7,7 @@ import json
 st.set_page_config(layout="wide")
 
 def main():
-    response = requests.get(settings.URL)
-    jsondata = response.json()
-    msg = jsondata['message']
-    st.title(msg)
+    st.title("MR Description Auto Generator")
     with st.form("inputs form", clear_on_submit=False):
         pr_link = st.text_input("Pull Request URL")
         jira_link = st.text_input("JIRA Issue ticket")
