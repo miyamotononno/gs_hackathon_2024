@@ -1,9 +1,15 @@
-from . import settings
+import settings
 from fastapi import FastAPI, Request
 import requests
 from requests.auth import HTTPBasicAuth
 import json
 from github import Github
+from langchain_google_genai import (
+    ChatGoogleGenerativeAI,
+    HarmBlockThreshold,
+    HarmCategory,
+)
+from langchain.prompts.chat import ChatPromptTemplate
 
 
 app = FastAPI()
@@ -19,9 +25,12 @@ async def create_info(info: Request):
     repo = jsondata["repo"]
     pr_id = int(jsondata["pr"])
     issue_key = jsondata["jira"]
-    response = {}
-    response["jira"] = get_jira(issue_key)
-    response["pr"] = get_pr(owner, repo, pr_id)
+    jira = get_jira(issue_key)
+    pr = get_pr(owner, repo, pr_id)
+    response = get_llm_response(jira, pr).content
+    print(f"jira info: {jira}")
+    print(f"pr info: {pr}")
+    print(f"llm: {response}")
     return response
 
 def get_jira(issue_key: str):
@@ -30,7 +39,7 @@ def get_jira(issue_key: str):
     headers = {
         "Accept": "application/json"
     }
-
+    print(f"Checking Jira issue #{issue_key}...")
     response = requests.request(
         "GET",
         url,
@@ -54,7 +63,7 @@ def get_pr(owner: str, repo: str, pr_id: int):
     result["title"] = pr.title
     result["number"] = pr.number
     result["changes"] = []
-    print(f"Checking Pull Request #{pr.number} - {pr.title}")
+    print(f"Checking Pull Request #{pr.number} - {pr.title}...")
     files = pr.get_files()
     for file in files:
         file_attr = {}
@@ -70,5 +79,13 @@ def get_pr(owner: str, repo: str, pr_id: int):
         result["changes"].append(file_attr)
     return result
 
-
-
+def get_llm_response(jira, pr):
+    llm = ChatGoogleGenerativeAI(model="gemini-pro",
+                                safety_settings={
+                                                HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT: HarmBlockThreshold.BLOCK_NONE,
+                                                 },
+                                google_api_key=settings.GOOGLE_API_KEY 
+            )
+    print(f"Getting summary from Gemini...")
+    result = llm.invoke(f"You are a software engineer. You are working on a project along with {jira}. You made pull request in project GitHub repository like {pr}. Please explain in brief and concise language what change you made, why and how you did that and testing, if done, alongside updates to your code. Use the format ## What, ## Why, ## How, ## Testing. Don't add anything that you are not sure of and don't make up false information.")
+    return result
