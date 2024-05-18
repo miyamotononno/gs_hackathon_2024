@@ -56,7 +56,7 @@ def get_jira(issue_key: str):
     return result
 
 def get_pr(owner: str, repo: str, pr_id: int):
-    g = Github()
+    g = Github(login_or_token=settings.GITHUB_ACCESS_TOKEN)
     repo = g.get_repo(f"{owner}/{repo}")
     pr = repo.get_pull(pr_id)
     result = {}
